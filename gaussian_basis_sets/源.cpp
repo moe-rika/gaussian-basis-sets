@@ -70,6 +70,24 @@ struct GauBas
 	}
 };
 
+struct ExGauBas
+{// x^a*y^b*z^c*ker
+	GauBas ker;
+	int a, b, c;
+	ExGauBas operator*(const ExGauBas& egb)
+	{
+		return ExGauBas{
+			ker*egb.ker,
+			a + egb.a,b + egb.b,c + egb.c
+		};
+	}
+	double operator()(const Point3D&p) const
+	{
+		auto R = p - ker.center;
+		return pow(R.x, a)*pow(R.y, b)*pow(R.z, c)*ker(p);
+	}
+};
+
 double term_T(const GauBas& gb1, const GauBas& gb2)
 {
 	double term_var_v_sq = gb1.alpha*gb2.alpha / (gb1.alpha + gb2.alpha);
@@ -196,12 +214,12 @@ void G_helper(int m, int n, const double& alpha, double coef)
 	}
 	else if (m == 1)
 	{
-		G_helper(m - 1, n + 1, alpha,- coef / 2 /alpha);
+		G_helper(m - 1, n + 1, alpha, -coef / 2 / alpha);
 	}
 	else
 	{
 		G_helper(m - 2, n, alpha, coef * m / 2 / alpha);
-		G_helper(m - 1, n + 1, alpha, -coef  / 2 / alpha);
+		G_helper(m - 1, n + 1, alpha, -coef / 2 / alpha);
 	}
 }
 
