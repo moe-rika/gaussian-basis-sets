@@ -236,6 +236,7 @@ int main()
 	//std::cout << calc_integral(a*a, a*b) << std::endl;
 
 	G(30, 0.5);
+
 	return 0;
 }
 
