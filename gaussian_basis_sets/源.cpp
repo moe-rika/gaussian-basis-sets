@@ -214,20 +214,20 @@ int main()
 {
 	const int div = 40, dim = 6;
 	const double range = 8;
-	std::array<HighDimSimpsonIntegration<dim>::IntegrationDescriptor, dim> d{
-		HighDimSimpsonIntegration<dim>::IntegrationDescriptor
-	{div,-range + range / div / 2,range + range / div / 2,0},
-		HighDimSimpsonIntegration<dim>::IntegrationDescriptor
-	{div,-range + range / div / 2,range + range / div / 2,0},
-		HighDimSimpsonIntegration<dim>::IntegrationDescriptor
-	{div,-range + range / div / 2,range + range / div / 2,0},
-		HighDimSimpsonIntegration<dim>::IntegrationDescriptor
-	{div,-range,range,0},
-		HighDimSimpsonIntegration<dim>::IntegrationDescriptor
-	{div,-range,range,0},
-		HighDimSimpsonIntegration<dim>::IntegrationDescriptor
-	{div,-range,range,0}
-	};
+	//std::array<HighDimSimpsonIntegration<dim>::IntegrationDescriptor, dim> d{
+	//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+	//{div,-range + range / div / 2,range + range / div / 2,0},
+	//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+	//{div,-range + range / div / 2,range + range / div / 2,0},
+	//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+	//{div,-range + range / div / 2,range + range / div / 2,0},
+	//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+	//{div,-range,range,0},
+	//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+	//{div,-range,range,0},
+	//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+	//{div,-range,range,0}
+	//};
 	//double k = HighDimSimpsonIntegration<6>::simpson_int(d, 0, func1);
 	//std::cout << k << std::endl;
 	//std::cout << calc_integral(a*b, a*b) << std::endl;
