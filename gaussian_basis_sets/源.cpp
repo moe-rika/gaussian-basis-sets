@@ -186,22 +186,22 @@ double func2(std::array<HighDimSimpsonIntegration<6>::IntegrationDescriptor, 6>&
 	return dd(p)*c(q) / R;
 }
 
-std::map<std::pair<int, int>, double> G_map;// order of derivation | 0 or 1 | coef
+std::map<int, double> G_map;// order of derivation | coef
 
 void G_helper(int m, int n, const double& alpha, double coef)
 {
 	if (m == 0)
 	{
-		G_map[{n, 0}] += coef;
+		G_map[n] += coef;
 	}
 	else if (m == 1)
 	{
-		G_map[{n, 1}] += coef;
+		G_helper(m - 1, n + 1, alpha,- coef / 2 /alpha);
 	}
 	else
 	{
-		G_helper(m - 2, n, alpha, (double)m / 2 / alpha);
-		G_helper(m - 1, n + 1, alpha, -(double)1 / 2 / alpha);
+		G_helper(m - 2, n, alpha, coef * m / 2 / alpha);
+		G_helper(m - 1, n + 1, alpha, -coef  / 2 / alpha);
 	}
 }
 
