@@ -40,6 +40,24 @@ struct Point3D
 		return Point3D{ a.x / b ,a.y / b, a.z / b };
 	}
 
+	double& operator[](int a)
+	{
+		if (a == 0)
+			return x;
+		if (a == 1)
+			return y;
+		return z;
+	}
+
+	const double& operator[](int a) const
+	{
+		if (a == 0)
+			return x;
+		if (a == 1)
+			return y;
+		return z;
+	}
+
 	const double norm_sq() const
 	{
 		return x * x + y * y + z * z;
@@ -56,7 +74,7 @@ struct GauBas
 	double k;
 	double alpha;
 	Point3D center;
-	GauBas operator*(const GauBas& gb)
+	GauBas operator*(const GauBas& gb) const
 	{
 		return GauBas{
 			k*gb.k*exp(-alpha * gb.alpha / (alpha + gb.alpha)*(center - gb.center).norm()),
@@ -226,6 +244,22 @@ void G_helper(int m, int n, const double& alpha, double coef)
 void G(int n, const double& alpha)
 {
 	G_helper(n, 0, alpha, 1);
+}
+
+double partial_calc_integral(const std::array<GauBas, 4>& a, int index_of_integrand, int choose_of_xyz)
+{
+	const double delta = 0.00000001;
+	GauBas da = a[index_of_integrand];
+	da.center[choose_of_xyz] += delta;
+	double val = calc_integral(a[0] * a[1], a[2] * a[3]);
+	if (index_of_integrand == 0)
+		return (calc_integral(da*a[1], a[2] * a[3]) - val) / delta;
+	else if (index_of_integrand == 1)
+		return (calc_integral(a[0] * da, a[2] * a[3]) - val) / delta;
+	else if (index_of_integrand == 2)
+		return (calc_integral(a[0] * a[1], da * a[3]) - val) / delta;
+	else
+		return (calc_integral(a[0] * a[1], a[2] * da) - val) / delta;
 }
 
 int main()
