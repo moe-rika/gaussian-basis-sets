@@ -52,3 +52,61 @@ struct HighDimSimpsonIntegration
 		}
 	}
 };
+
+
+
+
+//
+//
+//double func(std::array<HighDimSimpsonIntegration<3>::IntegrationDescriptor, 3>& d)
+//{
+//	if (d[0].val*d[0].val + d[1].val*d[1].val + d[2].val*d[2].val > 1)
+//	{
+//		return 0;
+//	}
+//	else
+//	{
+//		return 1;
+//	}
+//}
+//
+//GauBas a{ 0.3696,0.4166,{-0.4,0,0} }, b{ 0.5881,0.7739,{0.4,0,0} };
+//GauBas c = a * b, dd = a * a, e = b * b;
+/*
+double func1(std::array<HighDimSimpsonIntegration<6>::IntegrationDescriptor, 6>& d)
+{
+	Point3D p{ d[0].val,d[1].val,d[2].val }, q{ d[3].val,d[4].val,d[5].val };
+	double R = (p - q).norm();
+	return c(p)*c(q) / R;
+}
+
+double func2(std::array<HighDimSimpsonIntegration<6>::IntegrationDescriptor, 6>& d)
+{
+	Point3D p{ d[0].val,d[1].val,d[2].val }, q{ d[3].val,d[4].val,d[5].val };
+	double R = (p - q).norm();
+	return dd(p)*c(q) / R;
+}
+*/
+
+//const int div = 40, dim = 6;
+//const double range = 8;
+//std::array<HighDimSimpsonIntegration<dim>::IntegrationDescriptor, dim> d{
+//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+//{div,-range + range / div / 2,range + range / div / 2,0},
+//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+//{div,-range + range / div / 2,range + range / div / 2,0},
+//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+//{div,-range + range / div / 2,range + range / div / 2,0},
+//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+//{div,-range,range,0},
+//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+//{div,-range,range,0},
+//	HighDimSimpsonIntegration<dim>::IntegrationDescriptor
+//{div,-range,range,0}
+//};
+//double k = HighDimSimpsonIntegration<6>::simpson_int(d, 0, func1);
+//std::cout << k << std::endl;
+//std::cout << calc_integral(a*b, a*b) << std::endl;
+//double k = HighDimSimpsonIntegration<6>::simpson_int(d, 0, func2);
+//std::cout << k << std::endl;
+//std::cout << calc_integral(a*a, a*b) << std::endl;
