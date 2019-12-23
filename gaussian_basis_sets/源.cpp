@@ -3,7 +3,7 @@
 #include <iostream>
 #include <array>
 #include <map>
-
+#include <vector>
 #include "simpson.hpp"
 
 const double PI = 3.141592653589793;
@@ -105,6 +105,53 @@ struct ExGauBas
 		return pow(R.x, a)*pow(R.y, b)*pow(R.z, c)*ker(p);
 	}
 };
+
+class FourTermIntegral
+{
+public:
+	FourTermIntegral(const ExGauBas& _A, const ExGauBas& _B, 
+		const ExGauBas& _C, const ExGauBas& _D) :m_A(_A),m_B(_B),m_C(_C),m_D(_D) {};
+private:
+	ExGauBas m_A, m_B, m_C, m_D;
+	ExGauBas gb1 = m_A * m_B;
+	ExGauBas gb2 = m_C * m_D;
+
+	std::array<std::array<std::vector<double>, 3>, 4> partial_derivate_val;
+
+	double term_T_ker()
+	{
+		double term_var_v_sq = gb1.ker.alpha*gb2.ker.alpha / (gb1.ker.alpha + gb2.ker.alpha);
+		return (gb1.ker.center - gb2.ker.center).norm_sq()*term_var_v_sq;
+	}
+
+	double term_perfix_co_ker()//ker means it has not consider x^a*y^b*z^c term
+	{
+		return gb1.ker.k * gb2.ker.k * pow(PI, 3) / 
+			(gb1.ker.alpha*gb2.ker.alpha*sqrt(gb1.ker.alpha + gb2.ker.alpha));
+	}
+
+	double calc_integral_ker()
+	{
+		double a = term_T(gb1.ker, gb2.ker);
+		if (abs(a) < 0.0001)
+		{
+			return term_perfix_co_ker() * 2 / sqrt(0 + PI);
+		}
+		else
+		{
+			return term_perfix_co_ker() / sqrt(a)*erf(sqrt(a));
+		}
+	}
+
+	double calc_overlap_ker()
+	{
+		return gb1.ker.k*gb2.ker.k*pow(PI / (gb1.ker.alpha + gb2.ker.alpha), 1.5)*
+			exp(-gb1.ker.alpha*gb2.ker.alpha*(gb1.ker.center - gb2.ker.center).norm_sq() /
+			(gb1.ker.alpha + gb2.ker.alpha)
+			);
+	}
+};
+
 
 double term_T(const GauBas& gb1, const GauBas& gb2)
 {
