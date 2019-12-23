@@ -106,33 +106,42 @@ struct ExGauBas
 	}
 };
 
+template <typename T, unsigned int N>
+struct NDVect
+{
+	typedef  std::vector<typename NDVect<T, N - 1>::type> type;
+};
+template <typename T>
+struct NDVect<T, 1>
+{
+	typedef std::vector<T> type;
+};
+
 class FourTermIntegral
 {
 public:
-	FourTermIntegral(const ExGauBas& _A, const ExGauBas& _B, 
-		const ExGauBas& _C, const ExGauBas& _D) :m_A(_A),m_B(_B),m_C(_C),m_D(_D) {};
-private:
-	ExGauBas m_A, m_B, m_C, m_D;
-	ExGauBas gb1 = m_A * m_B;
-	ExGauBas gb2 = m_C * m_D;
-
-	std::array<std::array<std::vector<double>, 3>, 4> partial_derivate_val;
-
-	double term_T_ker()
+	FourTermIntegral(const ExGauBas& _A, const ExGauBas& _B,
+		const ExGauBas& _C, const ExGauBas& _D) :m_A(_A), m_B(_B), m_C(_C), m_D(_D) 
 	{
-		double term_var_v_sq = gb1.ker.alpha*gb2.ker.alpha / (gb1.ker.alpha + gb2.ker.alpha);
-		return (gb1.ker.center - gb2.ker.center).norm_sq()*term_var_v_sq;
-	}
-
-	double term_perfix_co_ker()//ker means it has not consider x^a*y^b*z^c term
-	{
-		return gb1.ker.k * gb2.ker.k * pow(PI, 3) / 
-			(gb1.ker.alpha*gb2.ker.alpha*sqrt(gb1.ker.alpha + gb2.ker.alpha));
-	}
+		m_size_list.push_back(m_A.a);
+		m_size_list.push_back(m_A.b);
+		m_size_list.push_back(m_A.c);
+		m_size_list.push_back(m_B.a);
+		m_size_list.push_back(m_B.b);
+		m_size_list.push_back(m_B.c);
+		m_size_list.push_back(m_C.a);
+		m_size_list.push_back(m_C.b);
+		m_size_list.push_back(m_C.c);
+		m_size_list.push_back(m_D.a);
+		m_size_list.push_back(m_D.b);
+		m_size_list.push_back(m_D.c);
+		my_resize(m_partial_derivate_val, m_size_list, 0);
+		my_resize(m_ker_fn_val, m_size_list, 0);
+	};
 
 	double calc_integral_ker()
 	{
-		double a = term_T(gb1.ker, gb2.ker);
+		double a = term_T_ker();
 		if (abs(a) < 0.0001)
 		{
 			return term_perfix_co_ker() * 2 / sqrt(0 + PI);
@@ -142,6 +151,44 @@ private:
 			return term_perfix_co_ker() / sqrt(a)*erf(sqrt(a));
 		}
 	}
+
+private:
+	ExGauBas m_A, m_B, m_C, m_D;
+	ExGauBas gb1 = m_A * m_B;
+	ExGauBas gb2 = m_C * m_D;
+
+	std::vector<int> m_size_list;
+
+
+	NDVect<double, 12>::type m_partial_derivate_val;
+	NDVect<double, 12>::type m_ker_fn_val;
+
+	template <typename T>
+	void my_resize(const T& resize_able,const std::vector<int>& _size_list,int n)
+	{
+		if (n < 12)
+		{
+			resize_able.resize(_size_list[n]);
+			for (auto &a : resize_able)
+				my_resize(a, _size_list, n + 1);
+		}
+	}
+
+	
+
+	double term_T_ker()
+	{
+		double term_var_v_sq = gb1.ker.alpha*gb2.ker.alpha / (gb1.ker.alpha + gb2.ker.alpha);
+		return (gb1.ker.center - gb2.ker.center).norm_sq()*term_var_v_sq;
+	}
+
+	double term_perfix_co_ker()//ker means it has not consider x^a*y^b*z^c term
+	{
+		return gb1.ker.k * gb2.ker.k * pow(PI, 3) /
+			(gb1.ker.alpha*gb2.ker.alpha*sqrt(gb1.ker.alpha + gb2.ker.alpha));
+	}
+
+
 
 	double calc_overlap_ker()
 	{
@@ -198,10 +245,10 @@ double func(std::array<HighDimSimpsonIntegration<3>::IntegrationDescriptor, 3>& 
 		return 1;
 	}
 }
-
-GauBas a{ 0.3696,0.4166,{-0.4,0,0} }, b{ 0.5881,0.7739,{0.4,0,0} };
-GauBas c = a * b, dd = a * a, e = b * b;
-
+//
+//GauBas a{ 0.3696,0.4166,{-0.4,0,0} }, b{ 0.5881,0.7739,{0.4,0,0} };
+//GauBas c = a * b, dd = a * a, e = b * b;
+/*
 double func1(std::array<HighDimSimpsonIntegration<6>::IntegrationDescriptor, 6>& d)
 {
 	Point3D p{ d[0].val,d[1].val,d[2].val }, q{ d[3].val,d[4].val,d[5].val };
@@ -215,7 +262,7 @@ double func2(std::array<HighDimSimpsonIntegration<6>::IntegrationDescriptor, 6>&
 	double R = (p - q).norm();
 	return dd(p)*c(q) / R;
 }
-
+*/
 std::map<int, double> G_map;// order of derivation | coef
 
 void G_helper(int m, int n, const double& alpha, double coef)
@@ -282,8 +329,14 @@ int main()
 	//std::cout << k << std::endl;
 	//std::cout << calc_integral(a*a, a*b) << std::endl;
 
+	GauBas a{ 0.3696,0.4166,{-0.4,0,0} }, b{ 0.5881,0.7739,{0.4,0,0} };
+	//GauBas c = a * b, dd = a * a, e = b * b;
+	ExGauBas p{ a,0,0,0 }, q{ b,0,0,0 };
+	FourTermIntegral fti(p, q, p, q);
+	std::cout << fti.calc_integral_ker() << std::endl;
+	//NDVect<double, 12>::type m;
 
-	G(30, 0.5);
+	//G(30, 0.5);
 
 	return 0;
 }
