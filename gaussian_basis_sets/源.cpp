@@ -205,20 +205,56 @@ private:
 	}
 
 
-	double partial_calc_integral(int index_of_integrand, int choose_of_xyz)
-	{
-		const double delta = 0.00000001;
-		double val1 = calc_integral_ker();
-		GauBas &da = ker_list[index_of_integrand];
-		da.center[choose_of_xyz] += delta;
-		gb1 = ker_list[0] * ker_list[1];
-		gb2 = ker_list[2] * ker_list[3];
-		double val2 = calc_integral_ker();
-		da.center[choose_of_xyz] -= delta;
-		gb1 = ker_list[0] * ker_list[1];
-		gb2 = ker_list[2] * ker_list[3];
-		return (val2 - val1) / delta;
+	//double partial_calc_integral(int &index_of_integrand, int &choose_of_xyz)
+	//{
+	//	const double delta = 0.00000001;
+	//	double val1 = calc_integral_ker();
+	//	GauBas &da = ker_list[index_of_integrand];
+	//	da.center[choose_of_xyz] += delta;
+	//	gb1 = ker_list[0] * ker_list[1];
+	//	gb2 = ker_list[2] * ker_list[3];
+	//	double val2 = calc_integral_ker();
+	//	da.center[choose_of_xyz] -= delta;
+	//	gb1 = ker_list[0] * ker_list[1];
+	//	gb2 = ker_list[2] * ker_list[3];
+	//	return (val2 - val1) / delta;
 
+	//}
+
+	double high_order_partial(int &index_of_integrand, int &choose_of_xyz,int order)
+	{
+		if (order == 0)
+		{
+			return calc_integral_ker();
+		}
+		else if (order == 1)
+		{
+			const double delta = 0.00000001;
+			double val1 = calc_integral_ker();
+			GauBas &da = ker_list[index_of_integrand];
+			da.center[choose_of_xyz] += delta;
+			gb1 = ker_list[0] * ker_list[1];
+			gb2 = ker_list[2] * ker_list[3];
+			double val2 = calc_integral_ker();
+			da.center[choose_of_xyz] -= delta;
+			gb1 = ker_list[0] * ker_list[1];
+			gb2 = ker_list[2] * ker_list[3];
+			return (val2 - val1) / delta;
+		}
+		else
+		{
+			const double delta = 0.00000001;
+			double val1 = high_order_partial(index_of_integrand, choose_of_xyz, order - 1);
+			GauBas &da = ker_list[index_of_integrand];
+			da.center[choose_of_xyz] += delta;
+			gb1 = ker_list[0] * ker_list[1];
+			gb2 = ker_list[2] * ker_list[3];
+			double val2 = high_order_partial(index_of_integrand, choose_of_xyz, order - 1);
+			da.center[choose_of_xyz] -= delta;
+			gb1 = ker_list[0] * ker_list[1];
+			gb2 = ker_list[2] * ker_list[3];
+			return (val2 - val1) / delta;
+		}
 	}
 
 	std::map<int, double> G_map;// order of derivation | coef
