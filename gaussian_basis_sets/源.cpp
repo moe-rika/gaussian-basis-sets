@@ -168,7 +168,7 @@ private:
 		return (gb1.ker.center - gb2.ker.center).norm_sq()*term_var_v_sq;
 	}
 
-	double term_perfix_co_ker()//ker means it has not consider x^a*y^b*z^c term
+	double term_perfix_co_ker()//ker means it is not consider x^a*y^b*z^c term
 	{
 		return gb1.ker.k * gb2.ker.k * pow(PI, 3) /
 			(gb1.ker.alpha*gb2.ker.alpha*sqrt(gb1.ker.alpha + gb2.ker.alpha));
@@ -245,3 +245,76 @@ int main()
 	return 0;
 }
 
+
+double func_1_1_1_1_1_1(double dx, double dy, double dz, double \
+	L) {
+	return(-10395 * erf(pow(L, 0.5))*pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(L, -\
+		6.5) + 945 * erf(pow(L, 0.5))*pow(dx, 2)*pow(dy, 2)*pow(L, -5.5) + \
+		945 * erf(pow(L, 0.5))*pow(dx, 2)*pow(dz, 2)*pow(L, -5.5) + \
+		945 * erf(pow(L, 0.5))*pow(dy, 2)*pow(dz, 2)*pow(L, -5.5) - \
+		105 * erf(pow(L, 0.5))*pow(dx, 2)*pow(L, -4.5) - \
+		105 * erf(pow(L, 0.5))*pow(dy, 2)*pow(L, -4.5) - \
+		105 * erf(pow(L, 0.5))*pow(dz, 2)*pow(L, -4.5) + \
+		15 * erf(pow(L, 0.5))*pow(L, -3.5) + \
+		20790 * pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -6)*pow(Pi, -0.5) - \
+		1890 * pow(dx, 2)*pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -5)*pow(Pi, -0.5) - \
+		1890 * pow(dx, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -5)*pow(Pi, -0.5) - \
+		1890 * pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -5)*pow(Pi, -0.5) + \
+		13860 * pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -5)*pow(Pi, -0.5) + 210 * pow(dx, 2)*pow(E, -pow(dx, 2) - \
+				pow(dy, 2) - pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) + \
+		210 * pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) - \
+		1260 * pow(dx, 2)*pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) + 210 * pow(dz, 2)*pow(E, -pow(dx, 2) - \
+				pow(dy, 2) - pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) - \
+		1260 * pow(dx, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) - \
+		1260 * pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) + \
+		5544 * pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -4)*pow(Pi, -0.5) - 30 * pow(E, -pow(dx, 2) - pow(dy, 2) - \
+				pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) + 140 * pow(dx, 2)*pow(E, -pow(dx, 2) - \
+					pow(dy, 2) - pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) + \
+		140 * pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) - \
+		504 * pow(dx, 2)*pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) + 140 * pow(dz, 2)*pow(E, -pow(dx, 2) - \
+				pow(dy, 2) - pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) - \
+		504 * pow(dx, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) - \
+		504 * pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) + \
+		1584 * pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -3)*pow(Pi, -0.5) - 20 * pow(E, -pow(dx, 2) - pow(dy, 2) - \
+				pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) + 56 * pow(dx, 2)*pow(E, -pow(dx, 2) - \
+					pow(dy, 2) - pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) + \
+		56 * pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) - \
+		144 * pow(dx, 2)*pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) + 56 * pow(dz, 2)*pow(E, -pow(dx, 2) - \
+				pow(dy, 2) - pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) - \
+		144 * pow(dx, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) - \
+		144 * pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) + \
+		352 * pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -2)*pow(Pi, -0.5) - 8 * pow(E, -pow(dx, 2) - pow(dy, 2) - \
+				pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) + 16 * pow(dx, 2)*pow(E, -pow(dx, 2) - \
+					pow(dy, 2) - pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) + \
+		16 * pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) - \
+		32 * pow(dx, 2)*pow(dy, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) + 16 * pow(dz, 2)*pow(E, -pow(dx, 2) - \
+				pow(dy, 2) - pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) - \
+		32 * pow(dx, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) - \
+		32 * pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5) + \
+		64 * pow(dx, 2)*pow(dy, 2)*pow(dz, 2)*pow(E, -pow(dx, 2) - pow(dy, 2) - \
+			pow(dz, 2))*pow(L, -1)*pow(Pi, -0.5));
+}
