@@ -93,8 +93,8 @@ struct GauBas
 struct TwoExGauBas
 {// x^a*y^b*z^c*ker
 	GauBas ker;
-	Point3D center1,center2;
-	int a1, b1, c1,a2,b2,c2;
+	Point3D center1, center2;
+	int a1, b1, c1, a2, b2, c2;
 	double operator()(const Point3D&p) const
 	{
 		auto R1 = p - center1;
@@ -140,7 +140,7 @@ class FourTermIntegral
 {
 public:
 	FourTermIntegral(const ExGauBas& _A, const ExGauBas& _B,
-		const ExGauBas& _C, const ExGauBas& _D) :m_A(_A), m_B(_B), m_C(_C), m_D(_D) 
+		const ExGauBas& _C, const ExGauBas& _D) :m_A(_A), m_B(_B), m_C(_C), m_D(_D)
 	{/*
 		m_size_list.push_back(m_A.a);
 		m_size_list.push_back(m_A.b);
@@ -171,38 +171,55 @@ public:
 
 private:
 	ExGauBas m_A, m_B, m_C, m_D;
-	TwoExGauBas gb1 = m_A * m_B;
-	TwoExGauBas gb2 = m_C * m_D;
-/*
-	std::vector<int> m_size_list;*/
+	GauBas ker_list[4] = { m_A.ker,m_B.ker,m_C.ker,m_D.ker };
+	GauBas gb1 = ker_list[0] * ker_list[1];
+	GauBas gb2 = ker_list[2] * ker_list[3];
+	/*
+		std::vector<int> m_size_list;*/
 
 
 	NDVect<double, 12>::type m_partial_derivate_val;
 	NDVect<double, 12>::type m_ker_fn_val;
 
-	
+
 	double term_T_ker()
 	{
-		double term_var_v_sq = gb1.ker.alpha*gb2.ker.alpha / (gb1.ker.alpha + gb2.ker.alpha);
-		return (gb1.ker.center - gb2.ker.center).norm_sq()*term_var_v_sq;
+		double term_var_v_sq = gb1.alpha*gb2.alpha / (gb1.alpha + gb2.alpha);
+		return (gb1.center - gb2.center).norm_sq()*term_var_v_sq;
 	}
 
 	double term_perfix_co_ker()//ker means it is not consider x^a*y^b*z^c term
 	{
-		return gb1.ker.k * gb2.ker.k * pow(PI, 3) /
-			(gb1.ker.alpha*gb2.ker.alpha*sqrt(gb1.ker.alpha + gb2.ker.alpha));
+		return gb1.k * gb2.k * pow(PI, 3) /
+			(gb1.alpha*gb2.alpha*sqrt(gb1.alpha + gb2.alpha));
 	}
 
 
 
 	double calc_overlap_ker()
 	{
-		return gb1.ker.k*gb2.ker.k*pow(PI / (gb1.ker.alpha + gb2.ker.alpha), 1.5)*
-			exp(-gb1.ker.alpha*gb2.ker.alpha*(gb1.ker.center - gb2.ker.center).norm_sq() /
-			(gb1.ker.alpha + gb2.ker.alpha)
+		return gb1.k*gb2.k*pow(PI / (gb1.alpha + gb2.alpha), 1.5)*
+			exp(-gb1.alpha*gb2.alpha*(gb1.center - gb2.center).norm_sq() /
+			(gb1.alpha + gb2.alpha)
 			);
 	}
 
+
+	double partial_calc_integral(int index_of_integrand, int choose_of_xyz)
+	{
+		const double delta = 0.00000001;
+		double val1 = calc_integral_ker();
+		GauBas &da = ker_list[index_of_integrand];
+		da.center[choose_of_xyz] += delta;
+		gb1 = ker_list[0] * ker_list[1];
+		gb2 = ker_list[2] * ker_list[3];
+		double val2 = calc_integral_ker();
+		da.center[choose_of_xyz] -= delta;
+		gb1 = ker_list[0] * ker_list[1];
+		gb2 = ker_list[2] * ker_list[3];
+		return (val2 - val1) / delta;
+
+	}
 
 	std::map<int, double> G_map;// order of derivation | coef
 
