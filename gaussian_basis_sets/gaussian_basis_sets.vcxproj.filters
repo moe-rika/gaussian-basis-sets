@@ -23,5 +23,8 @@
     <ClInclude Include="simpson.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="high_order_partial.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
