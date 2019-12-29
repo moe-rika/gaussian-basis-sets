@@ -315,7 +315,6 @@ int main()
 	//NDVect<double, 12>::type m;
 
 	//G(30, 0.5);
-	ValueTable<5, 5> n;
 
 	return 0;
 }

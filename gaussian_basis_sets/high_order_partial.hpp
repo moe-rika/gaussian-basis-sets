@@ -1,8 +1,8 @@
 #pragma once
 //C++ 98 required
 
-const int max_order = 15;
-int table[max_order][max_order + 1];
+const int max_order = 10;
+int table[max_order+1][max_order + 1];
 
 template <unsigned int N>
 struct Factorial
@@ -46,3 +46,4 @@ struct ValueTable<0, 0>
 	//static const int next = ValueTable<M - 1, M - 1>::value();
 };
 
+ValueTable<max_order, max_order> n;
