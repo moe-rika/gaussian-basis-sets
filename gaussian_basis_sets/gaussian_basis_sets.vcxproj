@@ -115,9 +115,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="源.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="2.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="iter.hpp" />
     <ClInclude Include="simpson.hpp" />
     <ClInclude Include="high_order_partial.hpp" />
   </ItemGroup>
