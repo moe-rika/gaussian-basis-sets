@@ -1,1 +1,1 @@
-__global__ void
+__global__ void 
