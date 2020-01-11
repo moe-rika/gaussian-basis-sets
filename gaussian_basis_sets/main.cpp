@@ -319,8 +319,8 @@ int main()
 
 	int a, b, c;
 
-	MyRangeIter<3> iter{ {&a,-5,4},{&b,11,11},{&c,12,13} };
-	while (!iter.finish)
+	MyRangeIter<3> iter{ {&a,-5,4,2},{&b,11,16,4},{&c,12,13,1} };
+	while (!iter.is_finished())
 	{
 		std::cout << a << "," << b << "," << c << std::endl;
 		iter.next();

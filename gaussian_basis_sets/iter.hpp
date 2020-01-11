@@ -35,6 +35,7 @@ struct MyRangeIter{
 			*(ptr[i]) = current[i] = start[i] = std::get<1>(a);
 			end[i] = std::get<2>(a);
 			step[i] = std::get<3>(a);
+			i++;
 		}
 	}
 
@@ -46,7 +47,7 @@ struct MyRangeIter{
 		}
 	}
 
-	bool finish = false;
+	const bool is_finished() const { return finish; };
 
 private:
 	std::array<int*, N> ptr;
@@ -54,6 +55,8 @@ private:
 	std::array<int, N> end;
 	std::array<int, N> step;
 	std::array<int, N> current;
+
+	bool finish = false;
 
 	void one_index_next(int n)
 	{
