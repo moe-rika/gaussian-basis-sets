@@ -7,6 +7,8 @@
 #include "simpson.hpp"
 #include "high_order_partial.hpp"
 
+#include "iter.hpp"
+
 const double PI = 3.141592653589793;
 
 struct Point3D
@@ -308,12 +310,21 @@ int main()
 {
 
 
-	GauBas a{ 0.3696,0.4166,{-0.4,0,0} }, b{ 0.5881,0.7739,{0.4,0,0} };
-	//GauBas c = a * b, dd = a * a, e = b * b;
-	ExGauBas p{ a,0,0,0 }, q{ b,0,0,0 };
-	FourTermIntegral fti(p, q, p, q);
-	std::cout << fti.calc_integral_ker() << std::endl;
-	std::cout << log(tgamma(10)) << std::endl;
+	//GauBas a{ 0.3696,0.4166,{-0.4,0,0} }, b{ 0.5881,0.7739,{0.4,0,0} };
+	////GauBas c = a * b, dd = a * a, e = b * b;
+	//ExGauBas p{ a,0,0,0 }, q{ b,0,0,0 };
+	//FourTermIntegral fti(p, q, p, q);
+	//std::cout << fti.calc_integral_ker() << std::endl;
+	//std::cout << log(tgamma(10)) << std::endl;
+
+	int a, b, c;
+
+	MyRangeIter<3> iter{ {&a,-5,4},{&b,11,11},{&c,12,13} };
+	while (!iter.finish)
+	{
+		std::cout << a << "," << b << "," << c << std::endl;
+		iter.next();
+ 	}
 	//NDVect<double, 12>::type m;
 
 	//G(30, 0.5);
