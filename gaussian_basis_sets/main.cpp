@@ -318,13 +318,9 @@ int main()
 	//std::cout << log(tgamma(10)) << std::endl;
 
 	int a, b, c;
+	auto f = [&]() {std::cout << a << "," << b << "," << c << std::endl; };
+	MyRangeIter<3> iter({ {&a,-5,4,2},{&b,11,16,4},{&c,12,13,1}},f);
 
-	MyRangeIter<3> iter{ {&a,-5,4,2},{&b,11,16,4},{&c,12,13,1} };
-	while (!iter.is_finished())
-	{
-		std::cout << a << "," << b << "," << c << std::endl;
-		iter.next();
- 	}
 	//NDVect<double, 12>::type m;
 
 	//G(30, 0.5);
