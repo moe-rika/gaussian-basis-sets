@@ -9,7 +9,7 @@
 
 #include "iter.hpp"
 
-const double PI = 3.141592653589793;
+const double PI = 3.141592653589793; 
 
 struct Point3D
 {
@@ -73,6 +73,72 @@ struct Point3D
 	}
 
 };
+
+
+//unnormalized atom-centered GTOs
+
+class GaussianTypeOrbital {
+public:
+	struct AngularMomentum
+	{
+		int a[3];//a[0] x;
+	};
+	AngularMomentum a;
+	double alpha;
+	Point3D center;
+};//needs to be improved AoS and SoA
+
+
+//J. Chem. Phys. 89, 5777 (1988); doi: 10.1063/1.455553
+//Phys. Chem. Chem. Phys., 2006, 8, 3072¨C3077
+class TwoElectronIntegral {
+public:
+	TwoElectronIntegral(
+		const GaussianTypeOrbital gto[4]
+	) 
+	{
+		ia = gto[0];
+		ib = gto[1];
+		ic = gto[2];
+		id = gto[3];
+
+		zeta = ia.alpha + ib.alpha;
+		eta = ic.alpha + id.alpha;
+		rho = zeta * eta / (zeta + eta);
+		P = (ia.alpha * ia.center + ib.alpha * ib.center) / zeta;
+		Q = (ic.alpha * ic.center + id.alpha * id.center) / eta;
+		T = rho * (P - Q).norm_sq();
+		S_ab = exp(-ia.alpha * ib.alpha / zeta * (ia.center - ib.center).norm_sq());
+		S_cd = exp(-ic.alpha * id.alpha / eta * (ic.center - id.center).norm_sq());
+		k = pow((PI / (zeta + eta)), 1.5);
+	}
+	Point3D A, B, C, D;
+	double zeta;
+	double eta;
+	///////////////////////
+	double rho;
+	//////////////////////
+	Point3D P, Q;
+	double T;
+	double S_ab, S_cd;
+	double k;
+};
+
+
+class TwoElectronIntegralHelper {
+public:
+	TwoElectronIntegralHelper(TwoElectronIntegral* _ei) :ei(_ei) {};
+	TwoElectronIntegral* ei;
+	int m = 0;
+};
+
+
+
+
+
+
+
+
 struct GauBas
 {//gaussian basis k*E^(-alpha*r^2)
 	double k;
@@ -306,6 +372,22 @@ private:
 //
 //}
 
+int count_micro_state(int ne, int np)
+{
+	if (ne == 1)
+		return 1;
+	else
+	{
+		int sum = 0;
+		for (size_t i = 0; i <= np; i++)
+		{
+
+			sum += count_micro_state(ne - 1, np - i);
+		}
+		return sum;
+	}
+}
+
 int main()
 {
 
@@ -317,18 +399,21 @@ int main()
 	//std::cout << fti.calc_integral_ker() << std::endl;
 	//std::cout << log(tgamma(10)) << std::endl;
 
-	int a, b, c;
-	MyRangeIter<3> iter({
-		{&a,-5,4,1},{&b,11,16,1},{&c,12,13,1}},
-		[&]() {
-		std::cout << a << "," << b << "," << c << std::endl; }
-	);
+	//int a, b, c;
+	//MyRangeIter<3> iter
+	//(
+	//	{{&a,-5,4,1},{&b,11,16,1},{&c,12,13,1}},
+	//	[&]() {std::cout << a << "," << b << "," << c << std::endl; }
+	//);
 
 	//NDVect<double, 12>::type m;
 
 	//G(30, 0.5);
+	int k = count_micro_state(10, 10);
 
 	return 0;
 }
+
+
 
 
