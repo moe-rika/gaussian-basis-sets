@@ -9,7 +9,7 @@
 
 #include "iter.hpp"
 
-const double PI = 3.141592653589793; 
+const double PI = 3.141592653589793;
 
 struct Point3D
 {
@@ -93,31 +93,43 @@ public:
 //Phys. Chem. Chem. Phys., 2006, 8, 3072¨C3077
 class TwoElectronIntegral {
 public:
-	TwoElectronIntegral(
-		const GaussianTypeOrbital gto[4]
-	) 
+	TwoElectronIntegral(const GaussianTypeOrbital gto[4])
 	{
-		ia = gto[0];
-		ib = gto[1];
-		ic = gto[2];
-		id = gto[3];
+		const auto& ia = gto[0];
+		const auto& ib = gto[1];
+		const auto& ic = gto[2];
+		const auto& id = gto[3];
 
-		zeta = ia.alpha + ib.alpha;
-		eta = ic.alpha + id.alpha;
+		const auto& alpha = ia.alpha;
+		const auto& beta = ib.alpha;
+		const auto& gamma = ic.alpha;
+		const auto& delta = id.alpha;
+
+
+		a = ia.a; A = ia.center;
+		b = ib.a; B = ib.center;
+		c = ic.a; C = ic.center;
+		d = id.a; D = id.center;
+
+		zeta = alpha + beta;
+		eta = gamma + delta;
 		rho = zeta * eta / (zeta + eta);
-		P = (ia.alpha * ia.center + ib.alpha * ib.center) / zeta;
-		Q = (ic.alpha * ic.center + id.alpha * id.center) / eta;
+		P = (alpha * A + beta * B) / zeta;
+		Q = (gamma * C + delta * D) / eta;
 		T = rho * (P - Q).norm_sq();
-		S_ab = exp(-ia.alpha * ib.alpha / zeta * (ia.center - ib.center).norm_sq());
-		S_cd = exp(-ic.alpha * id.alpha / eta * (ic.center - id.center).norm_sq());
+		S_ab = exp(-alpha * beta / zeta * (A - B).norm_sq());
+		S_cd = exp(-gamma * delta / eta * (C - D).norm_sq());
 		k = pow((PI / (zeta + eta)), 1.5);
 	}
-	Point3D A, B, C, D;
+	GaussianTypeOrbital::AngularMomentum a, b, c, d;
+	Point3D A, B, C, D;//used in next step,copy of 
+
+
 	double zeta;
 	double eta;
 	///////////////////////
 	double rho;
-	//////////////////////
+	///////////////////////
 	Point3D P, Q;
 	double T;
 	double S_ab, S_cd;
@@ -290,7 +302,7 @@ private:
 
 	//}
 
-	double high_order_partial(int &index_of_integrand, int &choose_of_xyz,int order)
+	double high_order_partial(int &index_of_integrand, int &choose_of_xyz, int order)
 	{
 		if (order == 0)
 		{
