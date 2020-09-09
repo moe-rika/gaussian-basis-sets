@@ -167,7 +167,7 @@ public:
 	};
 	Point3D delta_AB, delta_CD, W;
 	deque<TwoElectronIntegralHelperUnit> recurrence_queue, recurrence_queue_A;
-	void HRR()
+	void HRR_b()
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -182,15 +182,45 @@ public:
 				else
 				{
 					TwoElectronIntegralHelperUnit f1 = f;
-					TwoElectronIntegralHelperUnit f2 = f;
+
 					f1.a[i] += 1;
 					f1.b[i] -= 1;
-
-					f2.b[i] -= 1;
-					f2.k *= delta_AB[0];
-
 					recurrence_queue.push_back(f1);
-					recurrence_queue.push_back(f2);
+					f1 = f;
+					f1.b[i] -= 1;
+					f1.k *= delta_AB[0];
+					recurrence_queue.push_back(f1);
+
+					recurrence_queue.pop_front();
+				}
+			}
+			recurrence_queue.swap(recurrence_queue_A);
+		}
+	}
+
+	void HRR_d()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			while (!recurrence_queue.empty())
+			{
+				TwoElectronIntegralHelperUnit& f = recurrence_queue.front();
+				if (f.d[i] == 0)
+				{
+					recurrence_queue_A.push_front(f);
+					recurrence_queue.pop_front();
+				}
+				else
+				{
+					TwoElectronIntegralHelperUnit f1 = f;
+
+					f1.c[i] += 1;
+					f1.d[i] -= 1;
+					recurrence_queue.push_back(f1);
+					f1 = f;
+					f1.d[i] -= 1;
+					f1.k *= delta_CD[0];
+					recurrence_queue.push_back(f1);
 
 					recurrence_queue.pop_front();
 				}
@@ -230,7 +260,7 @@ public:
 					{
 						f1 = f;
 
-						f1.k *= (f1.a[i] - 1) / (2 * zeta);
+						f1.k *= ((double)f1.a[i] - 1) / (2 * zeta);
 						----f1.a[i];
 						recurrence_queue.push_back(f1);
 
@@ -290,7 +320,7 @@ public:
 			while (!recurrence_queue.empty())
 			{
 				const TwoElectronIntegralHelperUnit& f = recurrence_queue.front();
-				if (f.a[i] == 0)
+				if (f.c[i] == 0)
 				{
 					recurrence_queue_A.push_front(f);
 					recurrence_queue.pop_front();
@@ -299,55 +329,30 @@ public:
 				{
 					TwoElectronIntegralHelperUnit f1 = f;
 
-					f1.k *= (P[i] - A[i]);
-					--f1.a[i];
+					f1.k *= (Q[i] - C[i]);
+					--f1.c[i];
 
 					recurrence_queue.push_back(f1);
 
 					f1 = f;
 
-					f1.k *= -rho / eta * (P[i] - Q[i]);
-					--f1.a[i];
+					f1.k *= - rho / eta * (Q[i] - P[i]);
+					--f1.c[i];
 					++f1.m;
 					recurrence_queue.push_back(f1);
 
-					if (f.a[i] != 1)
+					if (f.c[i] != 1)
 					{
 						f1 = f;
 
-						f1.k *= (f1.a[i] - 1) / (2 * zeta);
-						----f1.a[i];
+						f1.k *= ((double)f1.c[i] - 1) / (2 * eta);
+						----f1.c[i];
 						recurrence_queue.push_back(f1);
 
 						f1 = f;
 
-						f1.k *= -rho / zeta;
-						----f1.a[i];
-						++f1.m;
-						recurrence_queue.push_back(f1);
-					}
-
-					if (f.b[i] != 0)
-					{
-						f1 = f;
-
-						f1.k *= f1.b[i] / (2 * zeta);
-						--f1.b[i];
-						recurrence_queue.push_back(f1);
-
-						f1 = f;
-
-						f1.k *= -rho / zeta;
-						--f1.b[i];
-						++f1.m;
-						recurrence_queue.push_back(f1);
-					}
-
-					if (f.c[i] != 0)
-					{
-						f1 = f;
-						f1.k *= f1.c[i] / 2 / (zeta + eta);
-						--f1.c[i];
+						f1.k *= -rho / eta;
+						----f1.c[i];
 						++f1.m;
 						recurrence_queue.push_back(f1);
 					}
@@ -355,8 +360,33 @@ public:
 					if (f.d[i] != 0)
 					{
 						f1 = f;
-						f1.k *= f1.d[i] / 2 / (zeta + eta);
+
+						f1.k *= f1.d[i] / (2 * eta);
 						--f1.d[i];
+						recurrence_queue.push_back(f1);
+
+						f1 = f;
+
+						f1.k *= -rho / eta;
+						--f1.d[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.a[i] != 0)
+					{
+						f1 = f;
+						f1.k *= f1.a[i] / 2 / (zeta + eta);
+						--f1.a[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.b[i] != 0)
+					{
+						f1 = f;
+						f1.k *= f1.b[i] / 2 / (zeta + eta);
+						--f1.b[i];
 						++f1.m;
 						recurrence_queue.push_back(f1);
 					}
