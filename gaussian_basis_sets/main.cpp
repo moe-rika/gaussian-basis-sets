@@ -149,60 +149,229 @@ public:
 	double k;
 };
 
-
-class TwoElectronIntegralHelper {
-public:
-	TwoElectronIntegralHelper(TwoElectronIntegral* _ei) :ei(_ei)
-	{
-		recurrence_queue.push_front({ 1,ei->a,ei->b,ei->c,ei->d,0 });
-		delta_AB = ei->A - ei->B;
-		delta_CD = ei->C - ei->D;
-	};
-	TwoElectronIntegral* ei;
-	Point3D delta_AB, delta_CD;
-	deque<TwoElectronIntegralHelperUnit> recurrence_queue, recurrence_queue_A;
-	void horizontal_recurrence()
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			while (!recurrence_queue.empty())
-			{
-				TwoElectronIntegralHelperUnit& a = recurrence_queue.front();
-				if (a.b[i] == 0)
-				{
-					recurrence_queue_A.push_front(a);
-					recurrence_queue.pop_front();
-				}
-				else
-				{
-					TwoElectronIntegralHelperUnit a1 = a;
-					TwoElectronIntegralHelperUnit a2 = a;
-					a1.a[i] += 1;
-					a1.b[i] -= 1;
-
-					a2.b[i] -= 1;
-					a2.k *= delta_AB[0];
-
-					recurrence_queue.push_back(a1);
-					recurrence_queue.push_back(a2);
-
-					recurrence_queue.pop_front();
-				}
-			}
-			recurrence_queue.swap(recurrence_queue_A);
-		}
-
-	}
-
-	vector<double> m{ max_angular_momentum };
-};
-
 struct TwoElectronIntegralHelperUnit
 {
 	double k = 1;
 	GaussianTypeOrbital::AngularMomentum a, b, c, d;
 	int m = 0;
 };
+
+class TwoElectronIntegralHelper :public TwoElectronIntegral {
+public:
+	TwoElectronIntegralHelper(const GaussianTypeOrbital gto[4]) :TwoElectronIntegral(gto)
+	{
+		recurrence_queue.push_front({ 1,a,b,c,d,0 });
+		delta_AB = A - B;
+		delta_CD = C - D;
+		W = (zeta * P + eta * Q) / (zeta + eta);
+	};
+	Point3D delta_AB, delta_CD, W;
+	deque<TwoElectronIntegralHelperUnit> recurrence_queue, recurrence_queue_A;
+	void HRR()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			while (!recurrence_queue.empty())
+			{
+				TwoElectronIntegralHelperUnit& f = recurrence_queue.front();
+				if (f.b[i] == 0)
+				{
+					recurrence_queue_A.push_front(f);
+					recurrence_queue.pop_front();
+				}
+				else
+				{
+					TwoElectronIntegralHelperUnit f1 = f;
+					TwoElectronIntegralHelperUnit f2 = f;
+					f1.a[i] += 1;
+					f1.b[i] -= 1;
+
+					f2.b[i] -= 1;
+					f2.k *= delta_AB[0];
+
+					recurrence_queue.push_back(f1);
+					recurrence_queue.push_back(f2);
+
+					recurrence_queue.pop_front();
+				}
+			}
+			recurrence_queue.swap(recurrence_queue_A);
+		}
+	}
+	void VRR_a()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			while (!recurrence_queue.empty())
+			{
+				const TwoElectronIntegralHelperUnit& f = recurrence_queue.front();
+				if (f.a[i] == 0)
+				{
+					recurrence_queue_A.push_front(f);
+					recurrence_queue.pop_front();
+				}
+				else
+				{
+					TwoElectronIntegralHelperUnit f1 = f;
+					
+					f1.k *= (P[i] - A[i]);
+					--f1.a[i];
+
+					recurrence_queue.push_back(f1);
+
+					f1 = f;
+
+					f1.k *= -rho / eta * (P[i] - Q[i]);
+					--f1.a[i];
+					++f1.m;
+					recurrence_queue.push_back(f1);
+
+					if (f.a[i] != 1)
+					{
+						f1 = f;
+
+						f1.k *= (f1.a[i] - 1) / (2 * zeta);
+						----f1.a[i];
+						recurrence_queue.push_back(f1);
+
+						f1 = f;
+
+						f1.k *= - rho / zeta;
+						----f1.a[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.b[i] != 0)
+					{
+						f1 = f;
+
+						f1.k *= f1.b[i]/ (2 * zeta);
+						--f1.b[i];
+						recurrence_queue.push_back(f1);
+
+						f1 = f;
+
+						f1.k *= - rho / zeta;
+						--f1.b[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+					
+					if (f.c[i] != 0)
+					{
+						f1 = f;
+						f1.k *= f1.c[i] / 2 / (zeta + eta);
+						--f1.c[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.d[i] != 0)
+					{
+						f1 = f;
+						f1.k *= f1.d[i] / 2 / (zeta + eta);
+						--f1.d[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					recurrence_queue.pop_front();
+				}
+			}
+			recurrence_queue.swap(recurrence_queue_A);
+		}
+	}
+
+	void VRR_c()
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			while (!recurrence_queue.empty())
+			{
+				const TwoElectronIntegralHelperUnit& f = recurrence_queue.front();
+				if (f.a[i] == 0)
+				{
+					recurrence_queue_A.push_front(f);
+					recurrence_queue.pop_front();
+				}
+				else
+				{
+					TwoElectronIntegralHelperUnit f1 = f;
+
+					f1.k *= (P[i] - A[i]);
+					--f1.a[i];
+
+					recurrence_queue.push_back(f1);
+
+					f1 = f;
+
+					f1.k *= -rho / eta * (P[i] - Q[i]);
+					--f1.a[i];
+					++f1.m;
+					recurrence_queue.push_back(f1);
+
+					if (f.a[i] != 1)
+					{
+						f1 = f;
+
+						f1.k *= (f1.a[i] - 1) / (2 * zeta);
+						----f1.a[i];
+						recurrence_queue.push_back(f1);
+
+						f1 = f;
+
+						f1.k *= -rho / zeta;
+						----f1.a[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.b[i] != 0)
+					{
+						f1 = f;
+
+						f1.k *= f1.b[i] / (2 * zeta);
+						--f1.b[i];
+						recurrence_queue.push_back(f1);
+
+						f1 = f;
+
+						f1.k *= -rho / zeta;
+						--f1.b[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.c[i] != 0)
+					{
+						f1 = f;
+						f1.k *= f1.c[i] / 2 / (zeta + eta);
+						--f1.c[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					if (f.d[i] != 0)
+					{
+						f1 = f;
+						f1.k *= f1.d[i] / 2 / (zeta + eta);
+						--f1.d[i];
+						++f1.m;
+						recurrence_queue.push_back(f1);
+					}
+
+					recurrence_queue.pop_front();
+				}
+			}
+			recurrence_queue.swap(recurrence_queue_A);
+		}
+	}
+
+	vector<double> m{ max_angular_momentum };
+};
+
+
 
 
 
